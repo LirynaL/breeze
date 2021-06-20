@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "0251e8f9-2f19-46d2-ad23-ae6195c31161",
+		"name": "lesson_12",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DZ_54_Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const $ = cheerio.load(pm.response.text());\r",
+							"\r",
+							"pm.test(\"По тексту 'О проекте' получаем из атрибута ссылку и её проверяем\", function () { \r",
+							" pm.expect($('a:contains(\"О проекте\")').attr(\"href\")).to.eql(\"https://okiseleva.blogspot.com/2017/04/users-soap-rest.html\"); \r",
+							"});\r",
+							"\r",
+							"console.log($('a:contains(\"О проекте\")').attr(\"href\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://users.bugred.ru/",
+					"protocol": "http",
+					"host": [
+						"users",
+						"bugred",
+						"ru"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DZ_55",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const $ = cheerio.load(pm.response.text());\r",
+							"\r",
+							"pm.test(\"Проверка, что ссылка на тренинги начинается на https://software-testing.ru/edu/3-online/\", function () { \r",
+							"     \r",
+							"     $('a[href^=\"https://software-testing.ru/edu/3\"]').each(function() {\r",
+							"            pm.expect($('[href^=\"https://software-testing.ru/edu/\"]').attr('href')).to.include(\"https://software-testing.ru/edu/3-online/\"); \r",
+							"     });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Проверка, что в тайтл есть текст 'Начало:' и дата\", function () { \r",
+							"\r",
+							"     $('a[href^=\"https://software-testing.ru/edu/3\"]').each(function() {\r",
+							"            pm.expect($('[href^=\"https://software-testing.ru/edu/\"]').attr('title')).to.match(/^Начало: ([1-9]|[12][0-9]|3[0-1])(.(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря).)(199[0-9]|20[0-2][0-9]|2030)/); \r",
+							"      });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Проверка, что есть класс slickTip\", function () { \r",
+							"      $('a[href^=\"https://software-testing.ru/edu/3\"]').each(function() {\r",
+							"          pm.expect($('[href^=\"https://software-testing.ru/edu/\"]').hasClass('slickTip')).to.be.true;\r",
+							"   });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Проверка атрибута target='_blank')\", function () { \r",
+							"    $('a[href^=\"https://software-testing.ru/edu/3\"]').each(function() {\r",
+							"        pm.expect($('[href^=\"https://software-testing.ru/edu/\"]').attr('target')).to.eql ('_blank'); \r",
+							"   });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Проверка атрибута атрибута rel)\", function () { \r",
+							"    $('a[href^=\"https://software-testing.ru/edu/3\"]').each(function() {\r",
+							"        pm.expect($('[href^=\"https://software-testing.ru/edu/3-online/\"]').attr('rel')).to.eql ('nofollow'); \r",
+							"   });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://software-testing.ru/",
+					"protocol": "https",
+					"host": [
+						"software-testing",
+						"ru"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

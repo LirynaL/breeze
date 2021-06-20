@@ -1,0 +1,215 @@
+{
+	"info": {
+		"_postman_id": "8879d85a-2101-47aa-a665-d0687b154149",
+		"name": "DZ_41",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DZ_41_shop_1",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Определяем количество товара\r",
+							"var quantity = Math.floor(Math.random() * 10) + 1;\r",
+							"pm.environment.set(\"quantity\", quantity);\r",
+							"console.log(\"количество создаваемого товара - \" + quantity);\r",
+							"var items = \"Пуговицы перламутровые_\"+ Math.floor(Math.random() * 100);\r",
+							"pm.environment.set(\"items\", items) // переменная для поиска \r",
+							"\r",
+							"for(i = 0; i < quantity; i++)\r",
+							"{ var name = items  + Math.floor(Math.random() * 1500);\r",
+							"  const echoPostRequest = {\r",
+							"    url: 'http://shop.bugred.ru/api/items/create/',\r",
+							"    method: 'POST',\r",
+							"    header: 'Content-Type:application/json',\r",
+							"    body: {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({ \r",
+							"        name: name,\r",
+							"        section: \"Платья\",\r",
+							"        description: \"Очень красивый аксессуар к любому платью\"\r",
+							"       })\r",
+							"  }\r",
+							"}; \r",
+							"\r",
+							"pm.sendRequest(echoPostRequest, function (err, response) {\r",
+							"    console.log(response.json());\r",
+							"});\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"//создаём массив с id созданных товаров\r",
+							"ar = new Array(); \r",
+							"    for (i=0; i<jsonData.result.length; i++) {\r",
+							"        ar.push(jsonData.result[i].id)\r",
+							"    }\r",
+							"console.log(\"id cозданных товаров - \" + ar)\r",
+							"\r",
+							"pm.test(\"Проверяем, что поиск возвращает правильное количество товара - \" + pm.environment.get(\"quantity\"), function () {\r",
+							"    pm.expect(jsonData.result).to.have.lengthOf(pm.environment.get(\"quantity\"));\r",
+							"});\r",
+							"\r",
+							"for (i=0; i<jsonData.result.length; i ++) {\r",
+							"pm.test(\"Проверяем, что все товары по поиску имеют имя - \" + pm.environment.get(\"items\"), function () {\r",
+							"    \r",
+							"    pm.expect(jsonData.result[i].name).include(pm.environment.get(\"items\"));\r",
+							"});\r",
+							"}\r",
+							"//удаляем созданные товары\r",
+							"ar.forEach(function (element) {\r",
+							" const Request = {\r",
+							"    url: 'http://shop.bugred.ru/api/items/delete/',\r",
+							"    method: 'DELETE',\r",
+							"    header: 'Content-Type:application/json',\r",
+							"    body: {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({ \r",
+							"        id: element, \r",
+							"       })\r",
+							"  }\r",
+							"};\r",
+							"pm.sendRequest(Request, function (err, res) {\r",
+							"  console.log(err ? err : res.json());\r",
+							"});  \r",
+							"} );\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "query",
+							"value": "{{items}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://shop.bugred.ru/api/items/search",
+					"protocol": "http",
+					"host": [
+						"shop",
+						"bugred",
+						"ru"
+					],
+					"path": [
+						"api",
+						"items",
+						"search"
+					],
+					"query": [
+						{
+							"key": "section",
+							"value": "Шорты",
+							"disabled": true
+						},
+						{
+							"key": "description",
+							"value": "Хороша от солнца",
+							"disabled": true
+						},
+						{
+							"key": "price",
+							"value": "333",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DZ_41_shop_2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Проверяем, что точно удалили товар с именем \" + pm.environment.get(\"items\") , function () {\r",
+							"       pm.expect(jsonData.result).to.have.lengthOf(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "query",
+							"value": "{{items}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://shop.bugred.ru/api/items/search",
+					"protocol": "http",
+					"host": [
+						"shop",
+						"bugred",
+						"ru"
+					],
+					"path": [
+						"api",
+						"items",
+						"search"
+					],
+					"query": [
+						{
+							"key": "section",
+							"value": "Шорты",
+							"disabled": true
+						},
+						{
+							"key": "description",
+							"value": "Хороша от солнца",
+							"disabled": true
+						},
+						{
+							"key": "price",
+							"value": "333",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
